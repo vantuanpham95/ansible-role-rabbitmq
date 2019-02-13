@@ -1,0 +1,48 @@
+---
+- name: Deliver configuration files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/rabbitmq/{{ item }}"
+  with_items:
+    - "rabbitmq.config"
+    - "rabbitmq-env.conf"
+  notify:
+    - Restart rabbitmq
+  tags:
+    - rabbitmq
+
+- name: Deliver service declare files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/lib/systemd/system/{{ item }}"
+  with_items:
+    - "rabbitmq-server.service"
+  notify:
+    - Restart rabbitmq
+    - Reload daemon
+  tags:
+    - rabbitmq
+
+- name: Ensure rabbitmq started
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: true
+  tags:
+    - rabbitmq
+
+- name: Create dirs for rabbitmq
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: rabbitmq
+    group: rabbitmq
+  with_items:
+    - "{{ rabbitmq_mnesia_base_dir }}"
+    - "{{ rabbitmq_mnesia_dir }}"
+    - "{{ rabbitmq_log_base_dir }}"
+    - "{{ rabbitmq_logs_dir }}"
+    - "{{ rabbitmq_sasl_logs_dir }}"
+    - "{{ rabbitmq_pid_dir }}"
+  tags:
+    - rabbitmq

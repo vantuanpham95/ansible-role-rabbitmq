@@ -1,0 +1,27 @@
+---
+# rabbitmq variables
+
+rabbitmq_plugins:
+  - "rabbitmq_management"
+
+rabbitmq_vhosts:
+  - "bplatform"
+  - "recsys"
+
+rabbitmq_app_user: "bkgo"
+rabbitmq_app_password: "HeeQkdlANN0"
+rabbitmq_admin_user: "admin"
+rabbitmq_admin_password: "bFsRlUYBC783RBC"
+
+rabbitmq_node_name: "tuanpv"
+rabbitmq_node_name_01: "tuanpv-01"
+
+rabbitmq_cluster_nodes: "rabbit@tuanpv"
+
+rabbitmq_server_additional_erl_args:  "+A 60"
+rabbitmq_mnesia_base_dir:             "/mnt/data/d1"
+rabbitmq_mnesia_dir:                  "/mnt/data/d1/mnesia"
+rabbitmq_log_base_dir:                "/mnt/data/logs"
+rabbitmq_logs_dir:                    "/mnt/data/logs/erl"
+rabbitmq_sasl_logs_dir:               "/mnt/data/logs/sasl"
+rabbitmq_pid_dir:                     "/mnt/data/run"

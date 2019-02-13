@@ -1,0 +1,34 @@
+[
+    {kernel, [
+        {inet_default_connect_options, [{nodelay, true}]},
+        {inet_default_listen_options,  [{nodelay, true}]},
+        {net_ticktime,  90}
+    ]},
+    {rabbit, [
+      {handshake_timeout, 10000},
+      {frame_max, 262144},
+      {initial_frame_max, 4096},
+      {channel_max, 128},
+      {log_levels, [{connection, info}, {channel, info}]},
+      {vm_memory_high_watermark, 0.8},
+      {vm_memory_high_watermark_paging_ratio, 0.6},
+      {memory_monitor_interval, 2500},
+      {disk_free_limit, {mem_relative, 0.25}},
+      {cluster_partition_handling, autoheal},
+      {cluster_nodes, {['{{ rabbitmq_cluster_nodes }}'], disc}},
+      {cluster_keepalive_interval, 10000},
+      {collect_statistics_interval, 30000},
+%%      {hipe_compile, true},
+      {num_tcp_acceptors, 12},
+      {tcp_listen_options, [
+%%           {packet, raw},
+%%           {reuseaddr, true},
+           {backlog, 4096},
+           {recbuf,262144},
+           {sndbuf,262144},
+           {nodelay, true},
+           {exit_on_close, false},
+           {keepalive, true}
+      ]}
+    ]}
+].

@@ -1,0 +1,52 @@
+---
+- name: Enable rabbitmq plugins
+  rabbitmq_plugin:
+    name: "{{ item }}"
+    state: enabled
+  with_items:
+    - "{{ rabbitmq_plugins }}"
+  tags:
+    - rabbitmq
+  ignore_errors: yes
+
+- name: Make sure to enable rabbitmq plugins
+  shell: rabbitmq-plugins enable {{ item }}
+  with_items:
+    - "{{ rabbitmq_plugins }}"
+  tags:
+    - rabbitmq
+  ignore_errors: yes
+
+- name: Create rabbitmq vhosts
+  rabbitmq_vhost:
+    name: "{{ item }}"
+  with_items:
+    - "{{ rabbitmq_vhosts }}"
+  tags:
+    - rabbitmq
+  ignore_errors: yes
+
+- name: Create admin rabbitmq users
+  rabbitmq_user:
+    user: "{{ item.user }}"
+    password: "{{ item.pass }}"
+    vhost: "{{ item.vhost }}"
+    tags: "{{ item.tags }}"
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    state: present
+  with_items:
+    - {user: "{{ rabbitmq_app_user }}", pass: "{{ rabbitmq_app_password }}", vhost: "bplatform", tags: "management"}
+    - {user: "{{ rabbitmq_admin_user }}", pass: "{{ rabbitmq_admin_password }}", vhost: "/", tags: "administrator"}
+    - {user: "{{ rabbitmq_admin_user }}", pass: "{{ rabbitmq_admin_password }}", vhost: "bplatform", tags: "administrator"}
+  tags:
+    - rabbitmq
+    - rabbitmq-user
+
+- name: Remove default guest user
+  rabbitmq_user:
+    user: guest
+    state: absent
+  tags:
+    - rabbitmq

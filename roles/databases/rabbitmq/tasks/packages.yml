@@ -1,0 +1,45 @@
+---
+- name: Add repo key
+  apt_key:
+    url: "https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc"
+    state: present
+  tags:
+    - rabbitmq
+
+- name: Add repo path
+  template:
+    src: rabbit.list
+    dest: /etc/apt/sources.list.d/
+  tags:
+    - rabbitmq
+
+- name: Add mapping rabbitmq node name to /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ item.ip }} {{ item.name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+  with_items:
+    - { name: "{{ rabbitmq_node_name }}", ip: "{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}" }
+    - { name: "{{ rabbitmq_node_name_01 }}", ip: "{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}" }
+
+- name: Check if erlang isntalled
+  command: dpkg-query -W esl-erlang
+  register: erlang_check_deb
+  failed_when: erlang_check_deb.rc > 1
+  changed_when: erlang_check_deb.rc == 1
+
+- name: Install Erlang
+  apt:
+    deb: "{{ rabbitmq_erlang_deb_url }}"
+  when: erlang_check_deb.rc == 1
+
+- name: Install rabbitmq
+  apt:
+    name: "{{ item }}={{ rabbitmq_server_version }}"
+    state: present
+    update_cache: true
+  with_items:
+    - "rabbitmq-server"
+  tags:
+    - rabbitmq

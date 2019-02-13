@@ -1,0 +1,17 @@
+---
+# rabbitmq_version: 3.7.8-1 # -1 is a must for apt-get
+# rabbitmq_plugins:
+#   - "rabbitmq_management"
+#
+# rabbitmq_vhosts:
+#   - "bplatform"
+#   - "recsys"
+#
+# rabbitmq_listen_interface: "{{ ec2_instance_address }}"
+# rabbitmq_mnesia_base_path: "/var/lib/rabbitmq"
+# rabbitmq_log_path: "/var/log/rabbitmq"
+# rabbitmq_pid_dir: "/var/run/rabbitmq"
+# # rabbitmq_app_user: "bkgo"
+# # rabbitmq_app_password: "HeeQkdlANN0"
+# # rabbitmq_admin_user: "admin"
+# # rabbitmq_admin_password: "bFsRlUYBC783RBC"

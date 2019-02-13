@@ -1,0 +1,17 @@
+---
+- name: Setup rabbitmq
+  hosts: prod-rabbitmq
+  vars:
+    - ansible_ssh_user: tuanpv
+    - ansible_ssh_port: 16889
+    - use_keys: tuanpv
+    - users_add:
+      - { user: 'tuanpv', password: '{{ password_tuanpv }}' }
+  become: true
+  gather_facts: true
+  roles:
+    - { role: hostname}
+    # - { role: provision/users}
+    - { role: aws/mount_ebs}
+    - { role: databases/rabbitmq }
+    - { role: monitorings/rabbitmq-exporter, tags: rabbitmq-exporter}

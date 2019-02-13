@@ -1,0 +1,5 @@
+# rabbitmq hosts
+[prod-rabbitmq]
+prod-aws-rabbitmq-01
+prod-aws-rabbitmq-02
+prod-aws-rabbitmq-mgmt

@@ -1,0 +1,36 @@
+---
+- name: Update all packages
+  apt:
+    upgrade: dist
+
+- name: Add mapping rabbitmq node name to /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ item.ip }} {{ item.name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+  with_items:
+    - { name: "{{ rabbitmq_node_name }}", ip: "{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}" }
+    - { name: "{{ rabbitmq_node_name_01 }}", ip: "{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}" }
+
+- name: Check if erlang isntalled
+  command: dpkg-query -W esl-erlang
+  register: erlang_check_deb
+  failed_when: erlang_check_deb.rc > 1
+  changed_when: erlang_check_deb.rc == 1
+
+- name: Install Erlang
+  apt:
+    deb: "{{ rabbitmq_erlang_deb_url }}"
+  when: erlang_check_deb.rc == 1
+
+- name: Check if rabbitmq installed
+  command: dpkg-query -W rabbitmq-server
+  register: rabbitmq_server_check_deb
+  failed_when: rabbitmq_server_check_deb.rc > 1
+  changed_when: rabbitmq_server_check_deb.rc == 1
+
+- name: Install rabbitmq-server
+  apt:
+    deb: "{{ rabbitmq_server_version }}"
+  when: rabbitmq_server_check_deb.rc == 1
