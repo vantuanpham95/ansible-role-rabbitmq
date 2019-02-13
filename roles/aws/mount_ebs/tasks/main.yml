@@ -1,0 +1,29 @@
+---
+- name: Format device "{{item.device}}" to ext4
+  filesystem:
+    fstype: ext4
+    dev: "{{ item.device }}"
+  with_items:
+    - "{{ mount_paths }}"
+  tags:
+    - mount_ebs
+
+- name: Create mount dir
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  with_items:
+    - "{{ mount_paths }}"
+  tags:
+    - mount_ebs
+
+- name: Mount device to path
+  mount:
+    path: "{{ item.path }}"
+    src: "{{ item.device }}"
+    fstype: ext4
+    state: mounted
+  with_items:
+    - "{{ mount_paths }}"
+  tags:
+    - mount_ebs

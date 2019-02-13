@@ -1,0 +1,9 @@
+---
+
+- name: rabbitmq exporter service reenable
+  command: systemctl reenable rabbitmq-exporter.service
+
+- name: restart rabbitmq exporter
+  service:
+    name: rabbitmq-exporter
+    state: restarted
